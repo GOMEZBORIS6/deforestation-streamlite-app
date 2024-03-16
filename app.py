@@ -7,11 +7,19 @@ import torch
 from PIL import Image
 from fastai.vision.all import *
 
-# fastai load_learner uses PosixPath, use a trick to load the model
-_saved_hack = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
-classification_model = load_learner('models/palmoil_fastai_resnet18.pth')
-pathlib.PosixPath = _saved_hack
+VERSION = '1.0'
+
+if platform.system() == "Windows":
+    # fastai load_learner uses PosixPath, use a trick to load the model
+    _saved_hack = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
+    classification_model = load_learner('models/palmoil_fastai_resnet18.pth')
+    pathlib.PosixPath = _saved_hack
+else :
+    _saved_hack = pathlib.WindowsPath
+    pathlib.WindowsPath = pathlib.PosixPath
+    classification_model = load_learner('models/palmoil_fastai_resnet18.pth')
+    pathlib.WindowsPath = _saved_hack
 
 
 def classify_image(image) -> bool:
